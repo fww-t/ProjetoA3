@@ -1,9 +1,10 @@
 package org.example;
 
+import java.sql.*;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Types;
+import java.sql.DriverManager;
+
 
 public class Usuario {
     private String nome;
@@ -75,6 +76,60 @@ public class Usuario {
         catch(Exception e){
             e.printStackTrace();
         }
+    }
+
+    public Usuario vizualizarUsuario(Long rgUsuario) {
+        String login = "root";
+        String senha = "passwd";
+        String host = "localhost";
+        String porta = "3306";
+        String timezone = "America/Sao_Paulo";
+        String bd = "Clinica";
+
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        Usuario usuario = null;
+
+        String sql = "SELECT nome_usuario, idade_usuario, ra_usuario, rg_usuario, email_usuario, telefone_usuario, endereco_usuario FROM usuario WHERE rg_usuario = ?";
+        ConnectionFactory factory = new ConnectionFactory();
+        try (Connection c = factory.connect()) {
+
+            String url = "jdbc:mysql://" + host + ":" + porta + "/" + bd + "?serverTimezone=" + timezone;
+            connection = DriverManager.getConnection(url, login, senha);
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1, rgUsuario);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                String nome_usuario = resultSet.getString("nome_usuario");
+                int idade_usuario = resultSet.getInt("idade_usuario");
+                String ra_usuario = resultSet.getString("ra_usuario");
+                long rg_usuario = resultSet.getLong("rg_usuario");
+                String email_usuario = resultSet.getString("email_usuario");
+                String telefone_usuario = resultSet.getString("telefone_usuario");
+                String endereco_usuario = resultSet.getString("endereco_usuario");
+                System.out.println(nome_usuario);
+
+                usuario = new Usuario();
+                usuario.setNome(nome_usuario);
+                usuario.setIdade(idade_usuario);
+                usuario.setRa(ra_usuario);
+                usuario.setRg(rg_usuario);
+                usuario.setEmail(email_usuario);
+                usuario.setTelefone(telefone_usuario);
+                usuario.setEndereco(endereco_usuario);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (resultSet != null) resultSet.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return usuario;
     }
 
     public String getNome() {

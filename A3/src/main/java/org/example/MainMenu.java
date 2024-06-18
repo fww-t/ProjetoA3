@@ -6,10 +6,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MainMenu extends JFrame {
-    private JButton signUpButton;
-    private JButton updateUserInfoButton;
-    private JButton createAppointmentButton;
+    private JButton cadastroButton;
+    private JButton atualizarUsuarioButton;
+    private JButton criarConsultaButton;
     private JButton logoutButton;
+    private JButton exibirInfoUsuarioButton;
 
     public MainMenu() {
         setTitle("Menu");
@@ -18,43 +19,52 @@ public class MainMenu extends JFrame {
         setLocationRelativeTo(null);
 
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(4, 1));
+        panel.setLayout(new GridLayout(5, 1));
 
-        signUpButton = new JButton("Cadastrar usuário");
-        updateUserInfoButton = new JButton("Atualizar informações de usuário");
-        createAppointmentButton = new JButton("Marcar consulta");
+        cadastroButton = new JButton("Cadastrar usuário");
+        atualizarUsuarioButton = new JButton("Atualizar informações de usuário");
+        criarConsultaButton = new JButton("Marcar consulta");
+        exibirInfoUsuarioButton = new JButton("Acessar dados do usuário");
         logoutButton = new JButton("Logout");
 
-        panel.add(signUpButton);
-        panel.add(updateUserInfoButton);
-        panel.add(createAppointmentButton);
+        panel.add(cadastroButton);
+        panel.add(atualizarUsuarioButton);
+        panel.add(criarConsultaButton);
+        panel.add(exibirInfoUsuarioButton);
         panel.add(logoutButton);
 
-        signUpButton.addActionListener(new ActionListener() {
+        cadastroButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                handleSignUp();
+                cadastrar();
             }
         });
 
-        updateUserInfoButton.addActionListener(new ActionListener() {
+        atualizarUsuarioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                handleUpdateUserInfo();
+                atualizarUsuario();
             }
         });
 
-        createAppointmentButton.addActionListener(new ActionListener() {
+        criarConsultaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                handleCreateAppointment();
+                criarConsulta();
+            }
+        });
+
+        exibirInfoUsuarioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                exibirInfoUsuario();
             }
         });
 
         logoutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                handleLogout();
+                logout();
             }
         });
 
@@ -62,20 +72,34 @@ public class MainMenu extends JFrame {
         setVisible(true);
     }
 
-    private void handleSignUp() {
+    private void cadastrar() {
         new Cadastro("Cadastrar");
         dispose();
     }
 
-    private void handleUpdateUserInfo() {
+    private void atualizarUsuario() {
         new Cadastro("Atualizar");
     }
 
-    private void handleCreateAppointment() {
+    private void criarConsulta() {
         JOptionPane.showMessageDialog(this, "Implementar consulta");
     }
 
-    private void handleLogout() {
+    private void exibirInfoUsuario() {
+        String rgStr = JOptionPane.showInputDialog(this, "Digite o RG do usuário:");
+        long rg_usuario = Long.parseLong(rgStr);
+
+        Usuario dados = new Usuario();
+        dados = dados.vizualizarUsuario(rg_usuario);
+        if (dados != null) {
+            String message = "Nome: " + dados.getNome() + "\nRG: " + dados.getRg() + "\nIdade: " + dados.getIdade() + "\nRA: " + dados.getRa() + "\nE-mail: " + dados.getEmail() + "\nTelefone: " + dados.getTelefone() + "\nEndereço: " + dados.getEndereco();
+            JOptionPane.showMessageDialog(this, message);
+        } else {
+            JOptionPane.showMessageDialog(this, "User not found.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void logout() {
         JOptionPane.showMessageDialog(this, "Saindo...");
         new Login();
         dispose();
